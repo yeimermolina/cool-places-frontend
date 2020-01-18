@@ -8,6 +8,7 @@ import {
 } from "../../shared/utils/validator";
 import { useForm } from "../../shared/hooks/form-hook";
 import "./PlaceForm.css";
+import Card from "../../shared/components/UI/Card";
 
 const PLACES = [
   {
@@ -59,19 +60,22 @@ export default function UpdatePlace() {
   const place = PLACES.find(p => p.id === placeId);
 
   useEffect(() => {
-    setFormData(
-      {
-        title: {
-          value: place.title,
-          isValid: true
+    if (place) {
+      setFormData(
+        {
+          title: {
+            value: place.title,
+            isValid: true
+          },
+          description: {
+            value: place.description,
+            isValid: true
+          }
         },
-        description: {
-          value: place.description,
-          isValid: true
-        }
-      },
-      true
-    );
+        true
+      );
+    }
+
     setLoading(false);
   }, [setFormData, place]);
 
@@ -83,7 +87,9 @@ export default function UpdatePlace() {
   if (!place) {
     return (
       <div className="center">
-        <h2>Place not found</h2>
+        <Card>
+          <h2>Place not found</h2>
+        </Card>
       </div>
     );
   }
