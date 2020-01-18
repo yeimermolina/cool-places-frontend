@@ -8,9 +8,18 @@ import Map from "../../shared/components/UI/Map";
 
 export default function PlaceItem(props) {
   const [showMap, setShowMap] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const openMapHandler = () => setShowMap(true);
   const closeMapHandler = () => setShowMap(false);
+
+  const openDeleteConfirmation = () => setShowDelete(true);
+  const closeDeleteConfirmation = () => setShowDelete(false);
+
+  const handleDelete = () => {
+    setShowDelete(false);
+    console.log("DELETE!");
+  };
 
   return (
     <React.Fragment>
@@ -25,6 +34,23 @@ export default function PlaceItem(props) {
         <div className="map-container">
           <Map center={props.coordinates} zoom={16} />
         </div>
+      </Modal>
+      <Modal
+        show={showDelete}
+        onCancel={closeDeleteConfirmation}
+        header="Warning"
+        contentClass="place-item__modal-content"
+        footerClass="place-item__modal-actions"
+        footer={
+          <React.Fragment>
+            <Button onClick={closeDeleteConfirmation} inverse>
+              CANCEL
+            </Button>
+            <Button onClick={handleDelete}>DELETE</Button>
+          </React.Fragment>
+        }
+      >
+        <p>Are you sure you want to delete this place?</p>
       </Modal>
       <li className="place-item">
         <Card className="place-item__content">
@@ -41,7 +67,9 @@ export default function PlaceItem(props) {
               VIEW ON MAP
             </Button>
             <Button to={`/places/${props.id}`}>EDIT</Button>
-            <Button danger>DELETE</Button>
+            <Button danger onClick={openDeleteConfirmation}>
+              DELETE
+            </Button>
           </div>
         </Card>
       </li>
