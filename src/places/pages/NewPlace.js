@@ -1,43 +1,16 @@
-import React, { useCallback, useReducer } from "react";
+import React from "react";
 import Input from "../../shared/components/FormElements/Input";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH
 } from "../../shared/utils/validator";
-import "./NewPlace.css";
+import { useForm } from "../../shared/hooks/form-hook";
+import "./PlaceForm.css";
 import Button from "../../shared/components/FormElements/Button";
 
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case "INPUT_CHANGE":
-      let formIsValid = true;
-      for (const inputId in state.inputs) {
-        if (inputId === action.inputId) {
-          formIsValid = formIsValid && action.isValid;
-        } else {
-          formIsValid = formIsValid && state.inputs[inputId].isValid;
-        }
-      }
-
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.inputId]: {
-            value: action.value,
-            isValid: action.isValid
-          }
-        },
-        isValid: formIsValid
-      };
-    default:
-      return state;
-  }
-};
-
 export default function NewPlace() {
-  const [formData, dispatch] = useReducer(formReducer, {
-    inputs: {
+  const [formData, inputHandler] = useForm(
+    {
       title: {
         value: "",
         isValid: false
@@ -45,19 +18,14 @@ export default function NewPlace() {
       description: {
         value: "",
         isValid: false
+      },
+      address: {
+        value: "",
+        isValid: false
       }
     },
-    isValid: false
-  });
-
-  const inputHandler = useCallback((id, value, isValid) => {
-    dispatch({
-      type: "INPUT_CHANGE",
-      inputId: id,
-      value: value,
-      isValid: isValid
-    });
-  }, []);
+    false
+  );
 
   const placeSubmitHandler = event => {
     event.preventDefault();
@@ -95,7 +63,7 @@ export default function NewPlace() {
         onInput={inputHandler}
       />
       <Button type="submit" disabled={!formData.isValid}>
-        ADD PLACE {formData.isValid}
+        ADD PLACE
       </Button>
     </form>
   );
