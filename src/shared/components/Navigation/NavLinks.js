@@ -17,7 +17,7 @@ export default function NavLinks(props) {
         <NavLink to="/places/new">ADD PLACE</NavLink>
       </li>
       <li>
-        <NavLink to="/login">LOGIN</NavLink>
+        <NavLink to="/auth">LOGIN</NavLink>
       </li>
     </ul>
   );
