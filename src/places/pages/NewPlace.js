@@ -12,6 +12,7 @@ import Button from "../../shared/components/FormElements/Button";
 import ErrorModal from "../../shared/components/UI/ErrorModal";
 import LoadingSpinner from "../../shared/components/UI/LoadingSpinner";
 import { AuthContext } from "../../shared/contexts/auth-context";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 export default function NewPlace() {
   const { loading, error, makeRequest, clearError } = useHttpClient();
@@ -30,6 +31,10 @@ export default function NewPlace() {
       address: {
         value: "",
         isValid: false
+      },
+      image: {
+        value: null,
+        isValid: false
       }
     },
     false
@@ -39,12 +44,14 @@ export default function NewPlace() {
     event.preventDefault();
 
     try {
-      await makeRequest("/places", "post", {
-        title: formData.inputs.title.value,
-        description: formData.inputs.description.value,
-        address: formData.inputs.address.value,
-        creator: userId
-      });
+      const data = new FormData();
+      data.append("title", formData.inputs.title.value);
+      data.append("description", formData.inputs.description.value);
+      data.append("address", formData.inputs.address.value);
+      data.append("creator", userId);
+      data.append("image", formData.inputs.image.value);
+
+      await makeRequest("/places", "post", data);
       history.push("/");
     } catch (e) {
       console.log(e);
@@ -56,6 +63,11 @@ export default function NewPlace() {
       <ErrorModal error={error} onClear={clearError} />
       <form className="place-form" onSubmit={placeSubmitHandler}>
         {loading && <LoadingSpinner asOverlay />}
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="Please provide a valid image"
+        />
         <Input
           id="title"
           type="text"

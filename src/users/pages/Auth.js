@@ -13,6 +13,7 @@ import LoadingSpinner from "../../shared/components/UI/LoadingSpinner";
 import ErrorModal from "../../shared/components/UI/ErrorModal";
 import { AuthContext } from "../../shared/contexts/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 export default function Auth() {
   const { loading, error, makeRequest, clearError } = useHttpClient();
@@ -34,7 +35,7 @@ export default function Auth() {
 
   const login = async e => {
     e.preventDefault();
-
+    console.log(formData.inputs);
     try {
       const email = formData.inputs.email.value;
       const password = formData.inputs.password.value;
@@ -46,12 +47,13 @@ export default function Auth() {
           password
         });
       } else {
-        const name = formData.inputs.name.value;
-        response = await makeRequest("/users/signup", "post", {
-          email,
-          password,
-          name
-        });
+        const data = new FormData();
+        data.append("email", email);
+        data.append("name", formData.inputs.name.value);
+        data.append("password", password);
+        data.append("image", formData.inputs.image.value);
+
+        response = await makeRequest("/users/signup", "post", data);
       }
       auth.login(response.user.id);
     } catch (e) {}
@@ -62,7 +64,8 @@ export default function Auth() {
       setFormData(
         {
           ...formData.inputs,
-          name: undefined
+          name: undefined,
+          image: undefined
         },
         formData.inputs.email.isValid && formData.inputs.password.isValid
       );
@@ -72,6 +75,10 @@ export default function Auth() {
           ...formData.inputs,
           name: {
             value: "",
+            isValid: false
+          },
+          image: {
+            value: null,
             isValid: false
           }
         },
@@ -98,6 +105,14 @@ export default function Auth() {
               validators={[VALIDATOR_REQUIRE()]}
               errorText="Please enter a valid Name"
               onInput={handleInput}
+            />
+          )}
+          {!isLogin && (
+            <ImageUpload
+              id="image"
+              center
+              onInput={handleInput}
+              errorText="Please provide a valid image"
             />
           )}
           <Input
