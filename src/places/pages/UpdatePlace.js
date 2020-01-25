@@ -1,47 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { useParams, useHistory } from "react-router-dom";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
+import ErrorModal from "../../shared/components/UI/ErrorModal";
+import LoadingSpinner from "../../shared/components/UI/LoadingSpinner";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH
 } from "../../shared/utils/validator";
 import { useForm } from "../../shared/hooks/form-hook";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import "./PlaceForm.css";
 import Card from "../../shared/components/UI/Card";
-
-const PLACES = [
-  {
-    id: "p1",
-    title: "New York",
-    description: "New York City!",
-    imageUrl:
-      "https://www.visittheusa.cl/sites/default/files/styles/hero_m_1300x700/public/images/hero_media_image/2017-04/7010d1e88b80578f3d4e6fc09c2a2379.jpeg?itok=YLMbh1Rm",
-    address: "New York",
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584
-    },
-    creatorId: "u1"
-  },
-  {
-    id: "p2",
-    title: "New York",
-    description: "New York City!",
-    imageUrl:
-      "https://www.visittheusa.cl/sites/default/files/styles/hero_m_1300x700/public/images/hero_media_image/2017-04/7010d1e88b80578f3d4e6fc09c2a2379.jpeg?itok=YLMbh1Rm",
-    address: "New York",
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584
-    },
-    creatorId: "u2"
-  }
-];
+import { AuthContext } from "../../shared/contexts/auth-context";
 
 export default function UpdatePlace() {
   const placeId = useParams().placeId;
-  const [loading, setLoading] = useState(true);
+  const auth = useContext(AuthContext);
+  const history = useHistory();
+  const [place, setPlace] = useState();
+  const { loading, error, makeRequest, clearError } = useHttpClient();
 
   const [formData, inputHandler, setFormData] = useForm(
     {
@@ -57,76 +35,90 @@ export default function UpdatePlace() {
     false
   );
 
-  const place = PLACES.find(p => p.id === placeId);
-
   useEffect(() => {
-    if (place) {
-      setFormData(
-        {
-          title: {
-            value: place.title,
-            isValid: true
+    const fetchPlace = async () => {
+      try {
+        const response = await makeRequest(`/places/${placeId}`);
+        setFormData(
+          {
+            title: {
+              value: response.place.title,
+              isValid: true
+            },
+            description: {
+              value: response.place.description,
+              isValid: true
+            }
           },
-          description: {
-            value: place.description,
-            isValid: true
-          }
-        },
-        true
-      );
-    }
+          true
+        );
+        setPlace(response.place);
+      } catch (e) {}
+    };
 
-    setLoading(false);
-  }, [setFormData, place]);
+    fetchPlace();
+  }, [setFormData, makeRequest, placeId]);
 
-  const placeSubmitHandler = event => {
+  const placeSubmitHandler = async event => {
     event.preventDefault();
-    console.log(formData.inputs);
+    try {
+      await makeRequest(`/places/${placeId}`, "patch", {
+        title: formData.inputs.title.value,
+        description: formData.inputs.description.value
+      });
+      history.push(`/${auth.userId}/places`);
+    } catch (e) {}
   };
 
-  if (!place) {
+  if (loading) {
+    return (
+      <div className="center">
+        <LoadingSpinner asOverlay />
+      </div>
+    );
+  }
+
+  if (!place && !error) {
     return (
       <div className="center">
         <Card>
-          <h2>Place not found</h2>
+          <h2>Could not find place!</h2>
         </Card>
       </div>
     );
   }
 
-  if (loading) {
-    return (
-      <div className="center">
-        <h2>Loading</h2>
-      </div>
-    );
-  }
-
   return (
-    <form className="place-form" onSubmit={placeSubmitHandler}>
-      <Input
-        id="title"
-        element="input"
-        type="text"
-        label="Title"
-        validators={[VALIDATOR_REQUIRE()]}
-        errorText="Please enter a valid title"
-        onInput={inputHandler}
-        value={formData.inputs.title.value}
-        valid={formData.inputs.title.isValid}
-      />
-      <Input
-        id="description"
-        label="Description"
-        validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
-        errorText="Please enter a valid description"
-        onInput={inputHandler}
-        value={formData.inputs.description.value}
-        valid={formData.inputs.description.isValid}
-      />
-      <Button type="submit" disabled={!formData.isValid}>
-        EDIT PLACE
-      </Button>
-    </form>
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+
+      {!loading && place && (
+        <form className="place-form" onSubmit={placeSubmitHandler}>
+          <Input
+            id="title"
+            element="input"
+            type="text"
+            label="Title"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid title"
+            onInput={inputHandler}
+            value={place.title}
+            valid={true}
+          />
+          <Input
+            id="description"
+            label="Description"
+            validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
+            errorText="Please enter a valid description"
+            onInput={inputHandler}
+            value={place.description}
+            valid={true}
+          />
+          <Button type="submit" disabled={!formData.isValid}>
+            EDIT PLACE
+          </Button>
+        </form>
+      )}
+    </React.Fragment>
   );
 }

@@ -38,21 +38,22 @@ export default function Auth() {
     try {
       const email = formData.inputs.email.value;
       const password = formData.inputs.password.value;
+      let response;
 
       if (isLogin) {
-        await makeRequest("/users/login", "post", {
+        response = await makeRequest("/users/login", "post", {
           email,
           password
         });
       } else {
         const name = formData.inputs.name.value;
-        await makeRequest("/users/signup", "post", {
+        response = await makeRequest("/users/signup", "post", {
           email,
           password,
           name
         });
       }
-      auth.login();
+      auth.login(response.user.id);
     } catch (e) {}
   };
 
