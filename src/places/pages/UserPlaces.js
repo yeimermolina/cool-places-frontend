@@ -21,11 +21,17 @@ export default function UserPlaces() {
     fetchPlaces();
   }, [makeRequest, userId]);
 
+  const placeDeleteHandler = placeId => {
+    setPlaces(prevPlaces => prevPlaces.filter(place => place.id !== placeId));
+  };
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
       {loading && <LoadingSpinner asOverlay />}
-      {!loading && places && <PlaceList places={places} />}
+      {!loading && places && (
+        <PlaceList places={places} onDeletePlace={placeDeleteHandler} />
+      )}
     </React.Fragment>
   );
 }
