@@ -1,18 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import UsersList from "../components/UsersList";
-
-const USERS = [
-  {
-    id: "u1",
-    name: "Yeimer",
-    image:
-      "https://uberblogapi.10upcdn.com/wp-content/uploads/2017/12/CHI_Campan%CC%83a-Foto-de-perfil-conductores-Uber_R2_312x312-03.png",
-    places: 3
-  }
-];
+import ErrorModal from "../../shared/components/UI/ErrorModal";
+import LoadingSpinner from "../../shared/components/UI/LoadingSpinner";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Users = () => {
-  return <UsersList users={USERS} />;
+  const [usersList, setUsersList] = useState();
+
+  const { loading, error, clearError, makeRequest } = useHttpClient();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await makeRequest("/users");
+        setUsersList(response.users);
+      } catch (e) {}
+    };
+
+    fetchUsers();
+  }, [makeRequest]);
+
+  return (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+      {loading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
+      {!loading && usersList && <UsersList users={usersList} />}
+    </React.Fragment>
+  );
 };
 
 export default Users;
