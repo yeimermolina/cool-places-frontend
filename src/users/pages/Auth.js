@@ -55,7 +55,7 @@ export default function Auth() {
 
         response = await makeRequest("/users/signup", "post", data);
       }
-      auth.login(response.user.id);
+      auth.login(response.userId, response.token, response.email);
     } catch (e) {}
   };
 

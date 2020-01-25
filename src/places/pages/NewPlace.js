@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useHistory } from "react-router-dom";
 import Input from "../../shared/components/FormElements/Input";
 import {
@@ -11,12 +11,10 @@ import "./PlaceForm.css";
 import Button from "../../shared/components/FormElements/Button";
 import ErrorModal from "../../shared/components/UI/ErrorModal";
 import LoadingSpinner from "../../shared/components/UI/LoadingSpinner";
-import { AuthContext } from "../../shared/contexts/auth-context";
 import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 export default function NewPlace() {
   const { loading, error, makeRequest, clearError } = useHttpClient();
-  const { userId } = useContext(AuthContext);
   const history = useHistory();
   const [formData, inputHandler] = useForm(
     {
@@ -48,7 +46,6 @@ export default function NewPlace() {
       data.append("title", formData.inputs.title.value);
       data.append("description", formData.inputs.description.value);
       data.append("address", formData.inputs.address.value);
-      data.append("creator", userId);
       data.append("image", formData.inputs.image.value);
 
       await makeRequest("/places", "post", data);

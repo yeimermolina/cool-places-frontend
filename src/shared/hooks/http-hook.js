@@ -1,8 +1,10 @@
+import { useState, useEffect, useCallback, useContext } from "react";
 import axios from "axios";
-import { useState, useEffect, useCallback } from "react";
 import request from "../../api/axios";
+import { AuthContext } from "../contexts/auth-context";
 
 export const useHttpClient = () => {
+  const auth = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
 
@@ -16,7 +18,10 @@ export const useHttpClient = () => {
           url,
           method,
           data,
-          headers,
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+            ...headers
+          },
           params,
           cancelToken: source.token
         });
@@ -32,7 +37,7 @@ export const useHttpClient = () => {
         throw e;
       }
     },
-    [source]
+    [source, auth]
   );
 
   const clearError = () => {
