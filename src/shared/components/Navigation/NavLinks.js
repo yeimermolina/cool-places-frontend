@@ -23,6 +23,11 @@ export default function NavLinks(props) {
           <NavLink to="/places/new">ADD PLACE</NavLink>
         </li>
       )}
+      {auth.isLoggedIn && (
+        <li>
+          <NavLink to="/calendar">CALENDAR</NavLink>
+        </li>
+      )}
       {!auth.isLoggedIn && (
         <li>
           <NavLink to="/auth">LOGIN</NavLink>

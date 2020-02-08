@@ -15,6 +15,7 @@ const NewPlace = React.lazy(() => import("./places/pages/NewPlace"));
 const UserPlaces = React.lazy(() => import("./places/pages/UserPlaces"));
 const UpdatePlace = React.lazy(() => import("./places/pages/UpdatePlace"));
 const Auth = React.lazy(() => import("./users/pages/Auth"));
+const Calendar = React.lazy(() => import("./calendar/pages/Calendar"));
 
 function App() {
   const { token, userId, email, login, logout } = useAuth();
@@ -35,6 +36,9 @@ function App() {
         </Route>
         <Route path="/places/:placeId" exact>
           <UpdatePlace />
+        </Route>
+        <Route path="/calendar" exact>
+          <Calendar />
         </Route>
         <Redirect to="/" />
       </Switch>

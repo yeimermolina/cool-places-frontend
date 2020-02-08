@@ -1,0 +1,28 @@
+.day {
+  flex: 1 1 0px;
+  background: white;
+  padding: 1rem;
+  border: 1px solid #ebebeb;
+  border-collapse: collapse;
+  cursor: pointer;
+  width: 0;
+  overflow: hidden;
+}
+
+.day:hover {
+  background: #ebebeb;
+}
+
+.day__number {
+  font-size: 1.3rem;
+  top: 1rem;
+  left: 2rem;
+}
+
+.day__events {
+  margin: 0;
+  font-size: 1rem;
+  min-height: 50px;
+  height: calc(100% - 2rem);
+  overflow-y: auto;
+}

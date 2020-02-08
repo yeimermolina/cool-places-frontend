@@ -1,0 +1,44 @@
+.day-appointment {
+  position: fixed;
+  visibility: hidden;
+  opacity: 0;
+  /* transition: all 0.5s; */
+  z-index: 500;
+  border: 1px solid black;
+  width: 200px;
+  height: 200px;
+  padding: 1rem;
+  background: #6578e1;
+  color: white;
+}
+
+.day-appointment--active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.day-appointment__close {
+  position: absolute;
+  right: 1rem;
+  top: 0.5rem;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.day-appointment__title {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.day-appointment__input {
+  margin-bottom: 1rem;
+}
+
+.day-appointment__input textarea {
+  width: 100% !important;
+  height: 60px;
+  resize: none;
+  font-size: 1rem;
+  padding: 0.5rem;
+}

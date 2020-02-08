@@ -1,0 +1,40 @@
+.calendar-header {
+}
+
+.month {
+  display: flex;
+  justify-content: space-between;
+  background: black;
+  color: white;
+  /* padding: 1rem; */
+}
+
+.month__name {
+  flex: 1;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 2rem;
+  align-self: center;
+}
+
+.month__action {
+  font-size: 1.3rem;
+  cursor: pointer;
+  align-self: center;
+  padding: 1rem 2rem;
+  height: 100%;
+  border: 1px solid #efefef;
+}
+
+.week-days {
+  display: flex;
+  background: white;
+  padding: 1rem;
+}
+
+.week-days > div {
+  flex: 1;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+}
