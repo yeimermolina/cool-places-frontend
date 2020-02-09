@@ -1,0 +1,45 @@
+.carousel {
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  overflow: hidden;
+  position: relative;
+}
+
+.carousel__img {
+  width: 100%;
+  position: absolute;
+  left: 0;
+}
+
+.carousel__buttons {
+  position: absolute;
+  top: 0.5em;
+  z-index: 10;
+}
+
+.slide-enter {
+  position: absolute;
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.slide-enter-active {
+  position: absolute;
+  transform: translateY(0);
+  opacity: 1;
+  transition: all 1s ease;
+}
+
+.slide-exit {
+  position: absolute;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.slide-exit-active {
+  position: absolute;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: all 1s ease;
+}
